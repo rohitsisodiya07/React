@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const Signup = () => {
 
   const answer = localStorage.getItem("result");
- const temp = JSON.parse(answer);
+  const temp = JSON.parse(answer);
 
   const [user, setUser] = useState(temp) ;
   const [id, setId] = useState('');

@@ -5,6 +5,8 @@ import Header from './Header'
 import Counter from './Counter'
 import Signup from './Signup'
 import Practice from './Practice'
+import Login from './Login'
+import FetchApi from './FetchApi'
 
 function App() {
   
@@ -22,6 +24,8 @@ function App() {
        <Route path='/' element={<Counter/>}/>
        <Route path='/Signup' element={<Signup/>}/>
        <Route path='/Pratice' element={<Practice user = {user}/>}/>
+       <Route path='/Login' element={<Login/>}/>
+       <Route path='/FetchApi' element={<FetchApi/>}/>
 
 
     </Routes>
