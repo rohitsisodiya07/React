@@ -7,8 +7,10 @@ const Header = () => {
         
         <h1 className='text-black text-center text-4xl pt-10'>Header</h1>
 
-        <div className='text-center pt-10 text-xl text-white'>
-            <Link to="/">Signup</Link>
+        <div className=' text-2xl flex justify-center gap-5 m-10'>
+            <Link to="/">Test01</Link>
+            <Link to="/Test02">Test02</Link>
+            <Link to="/Test03">Test03</Link>
         </div>
 
     </div>

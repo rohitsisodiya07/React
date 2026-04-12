@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Signup = () => {
+const Test01 = () => {
 
   const answer = localStorage.getItem("result");
   const temp = JSON.parse(answer);
@@ -119,4 +119,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Test01;

@@ -2,7 +2,9 @@ import { useState } from 'react'
 import './App.css'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Header from './Header';
-import Signup from './Signup';
+import Test01 from './Test01';
+import Test02 from './Test02';
+import Test03 from './Test03';
 
 
 function App() {
@@ -1811,13 +1813,46 @@ function App() {
   "limit": 30
 }
 
+  const result = {
+  india: {
+    states: {
+      Maharashtra: ["Mumbai", "Pune", "Nagpur"],
+      Karnataka: ["Bengaluru", "Mysuru", "Mangalore"],
+      TamilNadu: ["Chennai", "Coimbatore", "Madurai"],
+      Gujarat: ["Ahmedabad", "Surat", "Vadodara"],
+      Rajasthan: ["Jaipur", "Udaipur", "Jodhpur"],
+      WestBengal: ["Kolkata", "Siliguri", "Durgapur"],
+      Punjab: ["Chandigarh", "Amritsar", "Ludhiana"],
+      Haryana: ["Gurugram", "Faridabad", "Panipat"],
+      Telangana: ["Hyderabad", "Warangal", "Nizamabad"],
+      UttarPradesh: ["Lucknow", "Kanpur", "Agra"],
+      Bihar: ["Patna", "Gaya", "Bhagalpur"],
+      Odisha: ["Bhubaneswar", "Cuttack", "Rourkela"],
+    },
+  },
+  usa: {
+    states: {
+      California: ["Los Angeles", "San Francisco", "San Diego"],
+      NewYork: ["New York City", "Buffalo", "Rochester"],
+    },
+  },
+  germany: {
+    states: {
+      Bavaria: ["Munich", "Nuremberg", "Augsburg"],
+      Berlin: ["Berlin", "Potsdam", "Cottbus"],
+    },
+  },
+};
+
   localStorage.setItem("result", JSON.stringify(data));
   return (
     <BrowserRouter>
     <Header/>
     <Routes>
 
-      <Route path='/' element={<Signup/>}/>
+      <Route path='/' element={<Test01/>}/>
+      <Route path='/Test02' element={<Test02/>}/>
+      <Route path='/Test03' element={<Test03 result={result}/>}/>
     </Routes>
     
     </BrowserRouter>
