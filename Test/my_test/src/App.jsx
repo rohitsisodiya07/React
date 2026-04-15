@@ -5,6 +5,12 @@ import Header from './Header';
 import Test01 from './Test01';
 import Test02 from './Test02';
 import Test03 from './Test03';
+import Test04 from './Test04';
+import Test05 from './Test05';
+import Test06 from './Test06';
+import Test07 from './Test07';
+
+
 
 
 function App() {
@@ -1844,6 +1850,619 @@ function App() {
   },
 };
 
+  const location = {
+  india: {
+    states: {
+      Rajasthan: {
+        Jaipur: {
+          areas: ["Malviya Nagar", "Vaishali Nagar", "Mansarovar"],
+          pincode: 302017,
+          landmarks: ["Hawa Mahal", "City Palace"]
+        },
+        Udaipur: {
+          areas: ["Hiran Magri", "Fatehpura"],
+          pincode: 313001,
+          landmarks: ["Lake Pichola", "City Palace"]
+        }
+      },
+      Maharashtra: {
+        Mumbai: {
+          areas: ["Andheri", "Bandra", "Juhu"],
+          pincode: 400001,
+          landmarks: ["Gateway of India", "Marine Drive"]
+        },
+        Pune: {
+          areas: ["Hinjewadi", "Kothrud"],
+          pincode: 411001,
+          landmarks: ["Shaniwar Wada"]
+        }
+      }
+    }
+  },
+
+  usa: {
+    states: {
+      California: {
+        "Los Angeles": {
+          areas: ["Hollywood", "Beverly Hills"],
+          zip: 90001,
+          landmarks: ["Hollywood Sign"]
+        },
+        "San Francisco": {
+          areas: ["Mission District", "SoMa"],
+          zip: 94101,
+          landmarks: ["Golden Gate Bridge"]
+        }
+      }
+    }
+  }
+};
+
+  const answer = {
+  india: {
+    states: {
+      Rajasthan: {
+        Jaipur: {
+          areas: ["Malviya Nagar", "Mansarovar"],
+          pincode: 302017,
+          landmarks: ["Hawa Mahal", "City Palace"]
+        },
+        Jodhpur: {
+          areas: ["Shastri Nagar", "Ratanada"],
+          pincode: 342001,
+          landmarks: ["Mehrangarh Fort"]
+        }
+      },
+      Karnataka: {
+        Bengaluru: {
+          areas: ["Whitefield", "BTM"],
+          pincode: 560001,
+          landmarks: ["Lalbagh"]
+        }
+      }
+    }
+  },
+
+  usa: {
+    states: {
+      Texas: {
+        Dallas: {
+          areas: ["Irving", "Plano"],
+          pincode: 75001,
+          landmarks: ["Reunion Tower"]
+        }
+      }
+    }
+  }
+};
+
+  const basic = [
+  {
+    country: "india",
+    states: [
+      {
+        name: "Rajasthan",
+        cities: ["Jaipur", "Udaipur", "Jodhpur"]
+      },
+      {
+        name: "Maharashtra",
+        cities: ["Mumbai", "Pune", "Nagpur"]
+      }
+    ]
+  },
+  {
+    country: "usa",
+    states: [
+      {
+        name: "California",
+        cities: ["Los Angeles", "San Francisco"]
+      },
+      {
+        name: "Texas",
+        cities: ["Dallas", "Houston"]
+      }
+    ]
+  },
+  {
+    country: "germany",
+    states: [
+      {
+        name: "Bavaria",
+        cities: ["Munich", "Nuremberg"]
+      }
+    ]
+  }
+];
+
+const collegeData = {
+  Haryana: {
+    colleges: {
+      GJU: {
+        courses: {
+          BTech: {
+            branches: {
+              CSE: {
+                sections: {
+                  A: ["DSA", "DBMS", "OS", "CN", "React"],
+                  B: ["Node", "MongoDB", "SQL", "Java", "Python"],
+                  C: ["AI", "ML", "Cloud", "DevOps", "Testing"],
+                },
+              },
+              IT: {
+                sections: {
+                  A: ["HTML", "CSS", "JS", "React", "Node"],
+                  B: ["Java", "Spring", "SQL", "MongoDB", "Express"],
+                  C: ["DSA", "OS", "CN", "AWS", "Docker"],
+                },
+              },
+              Mechanical: {
+                sections: {
+                  A: ["Thermo", "CAD", "Fluid", "Machine", "Design"],
+                  B: ["Robotics", "AutoCAD", "Welding", "CNC", "Tool"],
+                  C: ["Heat", "Strength", "Production", "Workshop", "Viva"],
+                },
+              },
+            },
+          },
+          MBA: {
+            branches: {
+              Finance: {
+                sections: {
+                  A: ["Accounts", "Tax", "Audit", "Investment", "Economics"],
+                  B: ["Banking", "Budget", "Payroll", "GST", "Excel"],
+                  C: ["Business", "Risk", "Market", "Funds", "Research"],
+                },
+              },
+              Marketing: {
+                sections: {
+                  A: ["SEO", "Ads", "Branding", "Sales", "Digital"],
+                  B: ["Market", "CRM", "Lead", "Email", "Campaign"],
+                  C: ["Growth", "Social", "Content", "Analytics", "PR"],
+                },
+              },
+              HR: {
+                sections: {
+                  A: ["Hiring", "Payroll", "Policy", "Training", "Law"],
+                  B: ["Onboarding", "Attendance", "Leave", "Review", "KPI"],
+                  C: ["Culture", "Benefits", "Engagement", "Exit", "Docs"],
+                },
+              },
+            },
+          },
+          BCA: {
+            branches: {
+              Computer: {
+                sections: {
+                  A: ["C", "C++", "Java", "DBMS", "HTML"],
+                  B: ["CSS", "JS", "React", "Node", "MongoDB"],
+                  C: ["DSA", "OS", "CN", "Python", "Project"],
+                },
+              },
+              AI: {
+                sections: {
+                  A: ["Python", "ML", "DL", "NLP", "Vision"],
+                  B: ["TensorFlow", "Pandas", "NumPy", "Stats", "Model"],
+                  C: ["GenAI", "LLM", "Prompt", "RAG", "Agents"],
+                },
+              },
+              DataScience: {
+                sections: {
+                  A: ["Python", "Pandas", "SQL", "PowerBI", "Excel"],
+                  B: ["ML", "Stats", "EDA", "Cleaning", "Model"],
+                  C: ["Dashboard", "Viz", "NLP", "BigData", "Project"],
+                },
+              },
+            },
+          },
+        },
+      },
+
+      MDU: {
+        courses: {
+          BTech: {
+            branches: {
+              CSE: {
+                sections: {
+                  A: ["Java", "React", "Node", "MongoDB", "Redis"],
+                  B: ["Express", "SQL", "AWS", "Docker", "CI/CD"],
+                  C: ["Microservices", "Kafka", "System Design", "DSA", "OS"],
+                },
+              },
+              IT: {
+                sections: {
+                  A: ["Web", "API", "Cloud", "Security", "Linux"],
+                  B: ["Python", "Django", "FastAPI", "Postgres", "Redis"],
+                  C: ["K8s", "DevOps", "Jenkins", "Git", "Project"],
+                },
+              },
+              Mechanical: {
+                sections: {
+                  A: ["Machine", "Workshop", "CAD", "CAM", "Design"],
+                  B: ["Engine", "Hydraulic", "Fluid", "Thermo", "CNC"],
+                  C: ["Robotics", "Tool", "Heat", "Material", "Project"],
+                },
+              },
+            },
+          },
+          MBA: {
+            branches: {
+              Finance: {
+                sections: {
+                  A: ["Budget", "Tax", "Audit", "Accounts", "Funds"],
+                  B: ["Stock", "Equity", "Risk", "Research", "Excel"],
+                  C: ["Banking", "Loans", "Insurance", "Portfolio", "GST"],
+                },
+              },
+              Marketing: {
+                sections: {
+                  A: ["Brand", "SEO", "SEM", "Sales", "Lead"],
+                  B: ["Campaign", "CRM", "Social", "Email", "Analytics"],
+                  C: ["Growth", "PR", "Market", "Research", "Strategy"],
+                },
+              },
+              HR: {
+                sections: {
+                  A: ["Recruitment", "Payroll", "Training", "Review", "KPI"],
+                  B: ["Policy", "Attendance", "Leave", "Law", "Benefits"],
+                  C: ["Culture", "Engagement", "Exit", "Survey", "Docs"],
+                },
+              },
+            },
+          },
+          BCA: {
+            branches: {
+              Computer: {
+                sections: {
+                  A: ["C", "Java", "HTML", "CSS", "JS"],
+                  B: ["React", "Node", "SQL", "MongoDB", "Express"],
+                  C: ["DSA", "Python", "OS", "CN", "Mini Project"],
+                },
+              },
+              AI: {
+                sections: {
+                  A: ["ML", "DL", "NLP", "Vision", "Python"],
+                  B: ["Stats", "Model", "TensorFlow", "Pandas", "NumPy"],
+                  C: ["Prompt", "LLM", "Agents", "RAG", "Project"],
+                },
+              },
+              DataScience: {
+                sections: {
+                  A: ["Python", "SQL", "Pandas", "Excel", "PowerBI"],
+                  B: ["EDA", "ML", "Viz", "Dashboard", "BigData"],
+                  C: ["NLP", "Forecast", "Cleaning", "Model", "Project"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+
+  Rajasthan: {
+    colleges: {
+      JECRC: {
+        courses: {
+          BTech: {
+            branches: {
+              CSE: {
+                sections: {
+                  A: ["DSA", "DBMS", "OS", "CN", "React"],
+                  B: ["Node", "MongoDB", "SQL", "Java", "Python"],
+                  C: ["AI", "ML", "Cloud", "DevOps", "Testing"],
+                },
+              },
+              IT: {
+                sections: {
+                  A: ["HTML", "CSS", "JS", "React", "Node"],
+                  B: ["Java", "Spring", "SQL", "MongoDB", "Express"],
+                  C: ["DSA", "OS", "CN", "AWS", "Docker"],
+                },
+              },
+              Mechanical: {
+                sections: {
+                  A: ["Thermo", "CAD", "Fluid", "Machine", "Design"],
+                  B: ["Robotics", "AutoCAD", "Welding", "CNC", "Tool"],
+                  C: ["Heat", "Strength", "Production", "Workshop", "Viva"],
+                },
+              },
+            },
+          },
+          MBA: {
+            branches: {
+              Finance: {
+                sections: {
+                  A: ["Accounts", "Tax", "Audit", "Investment", "Economics"],
+                  B: ["Banking", "Budget", "Payroll", "GST", "Excel"],
+                  C: ["Business", "Risk", "Market", "Funds", "Research"],
+                },
+              },
+              Marketing: {
+                sections: {
+                  A: ["SEO", "Ads", "Branding", "Sales", "Digital"],
+                  B: ["Market", "CRM", "Lead", "Email", "Campaign"],
+                  C: ["Growth", "Social", "Content", "Analytics", "PR"],
+                },
+              },
+              HR: {
+                sections: {
+                  A: ["Hiring", "Payroll", "Policy", "Training", "Law"],
+                  B: ["Onboarding", "Attendance", "Leave", "Review", "KPI"],
+                  C: ["Culture", "Benefits", "Engagement", "Exit", "Docs"],
+                },
+              },
+            },
+          },
+          BCA: {
+            branches: {
+              Computer: {
+                sections: {
+                  A: ["C", "C++", "Java", "DBMS", "HTML"],
+                  B: ["CSS", "JS", "React", "Node", "MongoDB"],
+                  C: ["DSA", "OS", "CN", "Python", "Project"],
+                },
+              },
+              AI: {
+                sections: {
+                  A: ["Python", "ML", "DL", "NLP", "Vision"],
+                  B: ["TensorFlow", "Pandas", "NumPy", "Stats", "Model"],
+                  C: ["GenAI", "LLM", "Prompt", "RAG", "Agents"],
+                },
+              },
+              DataScience: {
+                sections: {
+                  A: ["Python", "Pandas", "SQL", "PowerBI", "Excel"],
+                  B: ["ML", "Stats", "EDA", "Cleaning", "Model"],
+                  C: ["Dashboard", "Viz", "NLP", "BigData", "Project"],
+                },
+              },
+            },
+          },
+        },
+      },
+
+      RTU: {
+        courses: {
+          BTech: {
+            branches: {
+              CSE: {
+                sections: {
+                  A: ["Java", "React", "Node", "MongoDB", "Redis"],
+                  B: ["Express", "SQL", "AWS", "Docker", "CI/CD"],
+                  C: ["Microservices", "Kafka", "System Design", "DSA", "OS"],
+                },
+              },
+              IT: {
+                sections: {
+                  A: ["Web", "API", "Cloud", "Security", "Linux"],
+                  B: ["Python", "Django", "FastAPI", "Postgres", "Redis"],
+                  C: ["K8s", "DevOps", "Jenkins", "Git", "Project"],
+                },
+              },
+              Mechanical: {
+                sections: {
+                  A: ["Machine", "Workshop", "CAD", "CAM", "Design"],
+                  B: ["Engine", "Hydraulic", "Fluid", "Thermo", "CNC"],
+                  C: ["Robotics", "Tool", "Heat", "Material", "Project"],
+                },
+              },
+            },
+          },
+          MBA: {
+            branches: {
+              Finance: {
+                sections: {
+                  A: ["Budget", "Tax", "Audit", "Accounts", "Funds"],
+                  B: ["Stock", "Equity", "Risk", "Research", "Excel"],
+                  C: ["Banking", "Loans", "Insurance", "Portfolio", "GST"],
+                },
+              },
+              Marketing: {
+                sections: {
+                  A: ["Brand", "SEO", "SEM", "Sales", "Lead"],
+                  B: ["Campaign", "CRM", "Social", "Email", "Analytics"],
+                  C: ["Growth", "PR", "Market", "Research", "Strategy"],
+                },
+              },
+              HR: {
+                sections: {
+                  A: ["Recruitment", "Payroll", "Training", "Review", "KPI"],
+                  B: ["Policy", "Attendance", "Leave", "Law", "Benefits"],
+                  C: ["Culture", "Engagement", "Exit", "Survey", "Docs"],
+                },
+              },
+            },
+          },
+          BCA: {
+            branches: {
+              Computer: {
+                sections: {
+                  A: ["C", "Java", "HTML", "CSS", "JS"],
+                  B: ["React", "Node", "SQL", "MongoDB", "Express"],
+                  C: ["DSA", "Python", "OS", "CN", "Mini Project"],
+                },
+              },
+              AI: {
+                sections: {
+                  A: ["ML", "DL", "NLP", "Vision", "Python"],
+                  B: ["Stats", "Model", "TensorFlow", "Pandas", "NumPy"],
+                  C: ["Prompt", "LLM", "Agents", "RAG", "Project"],
+                },
+              },
+              DataScience: {
+                sections: {
+                  A: ["Python", "SQL", "Pandas", "Excel", "PowerBI"],
+                  B: ["EDA", "ML", "Viz", "Dashboard", "BigData"],
+                  C: ["NLP", "Forecast", "Cleaning", "Model", "Project"],
+                },
+              },
+            },
+          },
+        },
+      },
+
+      Poornima: {
+        courses: {
+          BTech: {
+            branches: {
+              CSE: {
+                sections: {
+                  A: ["DSA", "DBMS", "OS", "CN", "React"],
+                  B: ["Node", "MongoDB", "SQL", "Java", "Python"],
+                  C: ["AI", "ML", "Cloud", "DevOps", "Testing"],
+                },
+              },
+              IT: {
+                sections: {
+                  A: ["HTML", "CSS", "JS", "React", "Node"],
+                  B: ["Java", "Spring", "SQL", "MongoDB", "Express"],
+                  C: ["DSA", "OS", "CN", "AWS", "Docker"],
+                },
+              },
+              Mechanical: {
+                sections: {
+                  A: ["Thermo", "CAD", "Fluid", "Machine", "Design"],
+                  B: ["Robotics", "AutoCAD", "Welding", "CNC", "Tool"],
+                  C: ["Heat", "Strength", "Production", "Workshop", "Viva"],
+                },
+              },
+            },
+          },
+          MBA: {
+            branches: {
+              Finance: {
+                sections: {
+                  A: ["Accounts", "Tax", "Audit", "Investment", "Economics"],
+                  B: ["Banking", "Budget", "Payroll", "GST", "Excel"],
+                  C: ["Business", "Risk", "Market", "Funds", "Research"],
+                },
+              },
+              Marketing: {
+                sections: {
+                  A: ["SEO", "Ads", "Branding", "Sales", "Digital"],
+                  B: ["Market", "CRM", "Lead", "Email", "Campaign"],
+                  C: ["Growth", "Social", "Content", "Analytics", "PR"],
+                },
+              },
+              HR: {
+                sections: {
+                  A: ["Hiring", "Payroll", "Policy", "Training", "Law"],
+                  B: ["Onboarding", "Attendance", "Leave", "Review", "KPI"],
+                  C: ["Culture", "Benefits", "Engagement", "Exit", "Docs"],
+                },
+              },
+            },
+          },
+          BCA: {
+            branches: {
+              Computer: {
+                sections: {
+                  A: ["C", "C++", "Java", "DBMS", "HTML"],
+                  B: ["CSS", "JS", "React", "Node", "MongoDB"],
+                  C: ["DSA", "OS", "CN", "Python", "Project"],
+                },
+              },
+              AI: {
+                sections: {
+                  A: ["Python", "ML", "DL", "NLP", "Vision"],
+                  B: ["TensorFlow", "Pandas", "NumPy", "Stats", "Model"],
+                  C: ["GenAI", "LLM", "Prompt", "RAG", "Agents"],
+                },
+              },
+              DataScience: {
+                sections: {
+                  A: ["Python", "Pandas", "SQL", "PowerBI", "Excel"],
+                  B: ["ML", "Stats", "EDA", "Cleaning", "Model"],
+                  C: ["Dashboard", "Viz", "NLP", "BigData", "Project"],
+                },
+              },
+            },
+          },
+        },
+      },
+
+        Banasthali: {
+          courses: {
+            BTech: {
+              branches: {
+                CSE: {
+                  sections: {
+                    A: ["Java", "React", "Node", "MongoDB", "Redis"],
+                    B: ["Express", "SQL", "AWS", "Docker", "CI/CD"],
+                    C: ["Microservices", "Kafka", "System Design", "DSA", "OS"],
+                  },
+                },
+                IT: {
+                  sections: {
+                    A: ["Web", "API", "Cloud", "Security", "Linux"],
+                    B: ["Python", "Django", "FastAPI", "Postgres", "Redis"],
+                    C: ["K8s", "DevOps", "Jenkins", "Git", "Project"],
+                  },
+                },
+                Mechanical: {
+                  sections: {
+                    A: ["Machine", "Workshop", "CAD", "CAM", "Design"],
+                    B: ["Engine", "Hydraulic", "Fluid", "Thermo", "CNC"],
+                    C: ["Robotics", "Tool", "Heat", "Material", "Project"],
+                  },
+                },
+              },
+            },
+            MBA: {
+              branches: {
+                Finance: {
+                  sections: {
+                    A: ["Budget", "Tax", "Audit", "Accounts", "Funds"],
+                    B: ["Stock", "Equity", "Risk", "Research", "Excel"],
+                    C: ["Banking", "Loans", "Insurance", "Portfolio", "GST"],
+                  },
+                },
+                Marketing: {
+                  sections: {
+                    A: ["Brand", "SEO", "SEM", "Sales", "Lead"],
+                    B: ["Campaign", "CRM", "Social", "Email", "Analytics"],
+                    C: ["Growth", "PR", "Market", "Research", "Strategy"],
+                  },
+                },
+                HR: {
+                  sections: {
+                    A: ["Recruitment", "Payroll", "Training", "Review", "KPI"],
+                    B: ["Policy", "Attendance", "Leave", "Law", "Benefits"],
+                    C: ["Culture", "Engagement", "Exit", "Survey", "Docs"],
+                  },
+                },
+              },
+            },
+            BCA: {
+              branches: {
+                Computer: {
+                  sections: {
+                    A: ["C", "Java", "HTML", "CSS", "JS"],
+                    B: ["React", "Node", "SQL", "MongoDB", "Express"],
+                    C: ["DSA", "Python", "OS", "CN", "Mini Project"],
+                  },
+                },
+                AI: {
+                  sections: {
+                    A: ["ML", "DL", "NLP", "Vision", "Python"],
+                    B: ["Stats", "Model", "TensorFlow", "Pandas", "NumPy"],
+                    C: ["Prompt", "LLM", "Agents", "RAG", "Project"],
+                  },
+                },
+                DataScience: {
+                  sections: {
+                    A: ["Python", "SQL", "Pandas", "Excel", "PowerBI"],
+                    B: ["EDA", "ML", "Viz", "Dashboard", "BigData"],
+                    C: ["NLP", "Forecast", "Cleaning", "Model", "Project"],
+                  },
+                },
+              },
+            },
+          },
+        },
+    },
+  }
+};
   localStorage.setItem("result", JSON.stringify(data));
   return (
     <BrowserRouter>
@@ -1853,6 +2472,10 @@ function App() {
       <Route path='/' element={<Test01/>}/>
       <Route path='/Test02' element={<Test02/>}/>
       <Route path='/Test03' element={<Test03 result={result}/>}/>
+      <Route path='/Test04' element={<Test04 location={location}/>}/>
+      <Route path='/Test05' element={<Test05 answer={answer}/>}/>
+      <Route path='/Test06' element={<Test06 basic={basic}/>}/>
+      <Route path='/Test07' element={<Test07 collegeData={collegeData}/>}/>
     </Routes>
     
     </BrowserRouter>
