@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
 
+  const navigate = useNavigate() ;
   const [error, setError] = useState({});
 
   const [form, setForm] = useState({
@@ -34,7 +36,8 @@ const Signup = () => {
     if (Object.keys(obj).length === 0) {
 
       localStorage.setItem('user', JSON.stringify(form));
-
+      
+      alert("Successfully Signup!!")
       setForm({
         name: '',
         email: '',
@@ -43,6 +46,7 @@ const Signup = () => {
         age: '',
         address: ''
       });
+      navigate("/Login");
     }
   }
 

@@ -3,14 +3,19 @@ import axios from "axios";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useNavigate } from "react-router-dom";
+import { ClimbingBoxLoader } from "react-spinners";
+import CheckCart from "./CheckCart";
 
-const FetchApi = () => {
+const FetchApi = ({ setCart, setWish }) => {
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState("");
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate() ;
+  const [showMore, setShowMore] = useState({});
+  const [viewDetail, setViewDetail] = useState(null);
+
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     const result = await axios.get("https://dummyjson.com/products");
@@ -24,15 +29,44 @@ const FetchApi = () => {
 
   const handleChange = () => {
     setToggle(!toggle);
-    if(toggle){
-      navigate('/Signup')
-    }
-    else{
-      navigate('/Login')
-    }
   };
 
-  const filterData = data.filter(
+  const handleCart = (product) => {
+    setCart((prevCart) => {
+      const presentItem = prevCart.find((item) => item.id === product.id);
+
+      if (presentItem) {
+        alert("Quantity Increased 🛒");
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
+        );
+      } else {
+        alert("Item added to cart 🛒");
+        return [...prevCart, { ...product, quantity: 1 }];
+      }
+    });
+  };
+  
+  const handleWish = (product) => {
+    
+    setWish( (prevWish) => {
+      const presentWish = prevWish.find((item) => item.id === product.id) ;
+      if(presentWish){
+        
+        alert("Already Added") ;
+      }
+      else{
+        alert("Item add to WishList") ;
+        return [...prevWish, { ...product}];
+
+        }
+      })
+  }
+
+  const filterData = data
+    .filter(
       (item) =>
         item.title.toLowerCase().includes(search.toLowerCase()) ||
         item.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -42,7 +76,7 @@ const FetchApi = () => {
       if (sorting === "high") return b.price - a.price;
       if (sorting === "low") return a.price - b.price;
       if (sorting === "highRating") return b.rating - a.rating;
-      if (sorting === "lowRating") return a.price - b.price;
+      if (sorting === "lowRating") return a.rating - b.rating;
       if (sorting === "highDiscount")
         return b.discountPercentage - a.discountPercentage;
       if (sorting === "lowDiscount")
@@ -55,7 +89,7 @@ const FetchApi = () => {
       <div className="flex gap-10 mb-10">
         <button
           onClick={handleChange}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+          className="bg-blue-500 text-white px-4 py-2 rounded"
         >
           Toggle
         </button>
@@ -78,51 +112,125 @@ const FetchApi = () => {
           placeholder="Search products..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border px-4 py-2 rounded w-1/4 shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="border px-4 py-2 rounded w-1/4"
         />
+
+        <button
+          className="bg-green-500 px-4 py-2 rounded text-white"
+          onClick={() => navigate("/CheckCart")}
+        >
+          Check Cart
+        </button>
+
+        <button
+          className="bg-red-500 px-4 py-2 rounded text-white"
+          onClick={() => navigate("/Wishlist")}
+        >
+          Wishlist
+        </button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {loading ? (
-          <h1 className="text-2xl">Loading.......</h1>
+          <div className="flex justify-center items-center h-screen">
+            <ClimbingBoxLoader color="#36d7b7" size={30} />
+          </div>
+        ) : data.length === 0 ? (
+          <h1 className="text-4xl">No Data Found!!!</h1>
         ) : (
           filterData.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-xl shadow-md hover:shadow-2xl hover:-translate-y-2 transform transition duration-300 overflow-hidden"
+              className={`bg-white rounded-xl shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl 
+  ${viewDetail && viewDetail !== item.id ? "opacity-30 blur-sm scale-95" : ""}
+  ${viewDetail === item.id ? "ring-5 ring-green-500 scale-105 z-10" : ""}`}
             >
-              <div className="h-48 bg-gray-50 flex items-center justify-center">
+              <div className="h-48 flex items-center justify-center">
                 <LazyLoadImage
                   src={item.thumbnail}
                   alt={item.title}
                   effect="blur"
-                  wrapperProps={{
-                    style: { transitionDelay: "0.5s" },
-                  }}
-                  className="w-full h-52 object-contain rounded'"
+                  className="w-full h-52 object-contain"
                 />
               </div>
 
-              <div className="p-4 space-y-1 text-sm">
-                <h2 className="font-semibold text-lg truncate">{item.title}</h2>
-                <p className="text-gray-500 line-clamp-2">{item.description}</p>
-
-                <p>
-                  <span className="font-medium">Category:</span> {item.category}
+              <div
+                className={`p-4 text-sm ${viewDetail === item.id ? "space-y-2" : ""}`}
+              >
+                <p className="text-gray-500 font-bold text-sm">
+                  Id : {item.id}
                 </p>
-                <p>
-                  <span className="font-medium">Brand:</span> {item.brand}
+                <h2 className="font-semibold text-lg">{item.title}</h2>
+
+                <p className="text-gray-500">
+                  {showMore[item.id]
+                    ? item.description
+                    : item.description.split(" ").slice(0, 10).join(" ") +
+                      "..."}
                 </p>
 
-                <div className="flex justify-between items-center mt-2">
+                <p
+                  onClick={() =>
+                    setShowMore((prev) => ({
+                      ...prev,
+                      [item.id]: !prev[item.id],
+                    }))
+                  }
+                  className="text-blue-500 cursor-pointer text-xs"
+                >
+                  {showMore[item.id] ? "less" : "more"}
+                </p>
+
+                <p><b>Category</b>: {item.category}</p>
+                <p><b>Brand</b>: {item.brand}</p>
+
+                <div className="flex justify-between">
                   <p className="text-green-600 font-bold">₹{item.price}</p>
-                  <p className="text-yellow-500">⭐ {item.rating}</p>
+                  <p>⭐ {item.rating}</p>
                 </div>
 
-                <p className="text-xs ">
-                  Discount Percentage: {item.discountPercentage}%
-                </p>
-                <p className="text-xs text-gray-400">Stock: {item.stock}</p>
+                <button
+                  onClick={() =>
+                    setViewDetail(viewDetail === item.id ? null : item.id)
+                  }
+                  className="bg-green-500 px-4 py-2 rounded text-white"
+                >
+                  {viewDetail === item.id ? "Hide Detail" : "View Detail"}
+                </button>
+
+                {viewDetail === item.id && (
+                  <div className="mt-3 text-sm text-gray-700">
+                    <p>
+                      <b>Full Description:</b> {item.description}
+                    </p>
+                    <p>
+                      <b>Brand:</b> {item.brand}
+                    </p>
+                    <p>
+                      <b>Category:</b> {item.category}
+                    </p>
+                    <p>
+                      <b>Stock:</b> {item.stock}
+                    </p>
+                    <p>
+                      <b>Discount:</b> {item.discountPercentage}%
+                    </p>
+                  </div>
+                )}
+
+                <button
+                  className="bg-green-500 px-4 py-2  ml-20 rounded text-white"
+                  onClick={() => handleCart(item)}
+                >
+                  Add Cart
+                </button>
+                
+                <button
+                  className="bg-green-500 px-4 py-2 mt-5  ml-20 rounded text-white"
+                  onClick={() => handleWish(item)}
+                >
+                  Add WishList
+                </button>
               </div>
             </div>
           ))

@@ -8,9 +8,17 @@ import Practice from './Practice'
 import Login from './Login'
 import FetchApi from './FetchApi'
 import Merge from './Merge'
+import ProtectedRoute from './ProtectedRoute'
+import ProductDetail from './ProductDetail'
+import CheckCart from './CheckCart'
+import Wishlist from './Wishlist'
 
 function App() {
   
+  const [cart, setCart] = useState([]);
+  const [wish, setWish] = useState([]);
+
+
   const user = [
   { id: 1, name: "Rohit" },
   { id: 2, name: "Aman" }
@@ -1831,8 +1839,21 @@ function App() {
        <Route path='/Signup' element={<Signup/>}/>
        <Route path='/Pratice' element={<Practice user = {user}/>}/>
        <Route path='/Login' element={<Login/>}/>
-       <Route path='/FetchApi' element={<FetchApi/>}/>
+       {/* <Route path='/FetchApi' element={<FetchApi/>}/> */}
+       <Route
+       path='/FetchApi'
+       element = {
+         
+         <ProtectedRoute>
+
+            <FetchApi setCart = {setCart} setWish = {setWish}/>
+          </ProtectedRoute>
+       }
+       />
        <Route path='/Merge' element={<Merge answer={answer}/>}/>
+       {/* <Route path='/product/:id' element={<ProductDetail/>}/> */}
+       <Route path='/CheckCart' element={<CheckCart cart={cart}/>}/>
+       <Route path='/Wishlist' element={<Wishlist wish={wish}/>}/>
 
 
     </Routes>

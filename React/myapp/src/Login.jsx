@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+
+  const navigate = useNavigate() ;
+  
 
   const [form, setForm] = useState({
     email: '',
@@ -16,12 +20,15 @@ const Login = () => {
 
     if (!result) {
       alert("No user found, please signup first");
-      return;
+      navigate("/Signup")
+      
     }
 
     if (form.email === result.email && form.password === result.password) {
     alert("Login Successfully");
+    localStorage.setItem("token", true)
     setUser(true);
+    navigate("/FetchApi")
     } 
 
     else if (form.email !== result.email && form.password !== result.password) {
