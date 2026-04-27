@@ -10,12 +10,14 @@ const Info = ({ label, value }) => (
   </p>
 );
 
-const Wishlist = ({ wish }) => {
+const Wishlist = ({ wish, cart, addToCart }) => {
   const [loading, setLoading] = useState(true);
   const [showMore, setShowMore] = useState({});
-  const [wishs, setWish] = useState(wish);
+  const [wishs, setWishs] = useState(wish);
 
   const navigate = useNavigate();
+  console.log(">>>>>>>>cart", cart);
+  
 
   useEffect(() => {
     setTimeout(() => {
@@ -24,10 +26,12 @@ const Wishlist = ({ wish }) => {
   }, []);
 
   const handleRemove = (product) => {
-    setWish((prevCart) => {
+    setWishs((prevCart) => {
       return prevCart.filter((item) => item.id !== product.id);
     });
   };
+  
+
 
   return (
     <div>
@@ -96,12 +100,19 @@ const Wishlist = ({ wish }) => {
                   <p className="text-green-600 font-bold">₹{item.price}</p>
                   <p>⭐ {item.rating}</p>
                 </div>
-                <div className="text-center">
+                <div className="text-center flex justify-evenly">
                   <button
                     onClick={() => handleRemove(item)}
-                    className="bg-red-600 px-10 py-3 rounded text-white"
+                    className="bg-red-600 px-10 py-3 rounded text-white cursor-pointer"
                   >
                     Remove
+                  </button>
+
+                  <button
+                    onClick={() => addToCart(item)}
+                    className="bg-green-600 px-10 py-3 rounded text-white cursor-pointer"
+                  >
+                    Add to Cart
                   </button>
                 </div>
               </div>

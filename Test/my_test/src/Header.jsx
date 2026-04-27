@@ -15,6 +15,10 @@ const Header = () => {
             <Link to="/Test05">Test05</Link>
             <Link to="/Test06">Test06</Link>
             <Link to="/Test07">Test07</Link>
+            <Link to="/Signup">Signup</Link>
+            <Link to="/Login">Login</Link>
+            <Link to="/Api">Api</Link>
+            {/* <Link to="/Child">Child</Link> */}
         </div>
 
     </div>

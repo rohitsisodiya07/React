@@ -13,6 +13,9 @@ const Header = () => {
             <Link to = "/FetchApi">FetchApi</Link>
             <Link to = "/Merge">Merge</Link>
             <Link to = "/ProductDetail">ProductDetail</Link>
+            <Link to = "/Parent">Parent</Link>
+            <Link to = "/Help">Help</Link>
+            <Link to = "/Event">Event</Link>
         </div>
     </div>
   )

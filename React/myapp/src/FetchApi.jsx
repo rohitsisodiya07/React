@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { ClimbingBoxLoader } from "react-spinners";
 import CheckCart from "./CheckCart";
 
-const FetchApi = ({ setCart, setWish }) => {
+const FetchApi = ({ cart, setCart, setWish }) => {
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
   const [search, setSearch] = useState("");
@@ -48,22 +48,22 @@ const FetchApi = ({ setCart, setWish }) => {
       }
     });
   };
-  
-  const handleWish = (product) => {
-    
-    setWish( (prevWish) => {
-      const presentWish = prevWish.find((item) => item.id === product.id) ;
-      if(presentWish){
-        
-        alert("Already Added") ;
-      }
-      else{
-        alert("Item add to WishList") ;
-        return [...prevWish, { ...product}];
 
-        }
-      })
-  }
+  const removeFromCart = (product) => {
+    setCart((prev) => prev.filter((item) => item.id !== product.id));
+  };
+
+  const handleWish = (product) => {
+    setWish((prevWish) => {
+      const presentWish = prevWish.find((item) => item.id === product.id);
+      if (presentWish) {
+        alert("Already Added");
+      } else {
+        alert("Item add to WishList");
+        return [...prevWish, { ...product }];
+      }
+    });
+  };
 
   const filterData = data
     .filter(
@@ -89,14 +89,14 @@ const FetchApi = ({ setCart, setWish }) => {
       <div className="flex gap-10 mb-10">
         <button
           onClick={handleChange}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
         >
           Toggle
         </button>
 
         <select
           onChange={(e) => setSorting(e.target.value)}
-          className="border-2 p-2"
+          className="border-2 p-2 cursor-pointer"
         >
           <option value="">Select Sorting</option>
           <option value="high">High Price</option>
@@ -116,14 +116,14 @@ const FetchApi = ({ setCart, setWish }) => {
         />
 
         <button
-          className="bg-green-500 px-4 py-2 rounded text-white"
+          className="bg-green-500 px-4 py-2 rounded text-white cursor-pointer"
           onClick={() => navigate("/CheckCart")}
         >
           Check Cart
         </button>
 
         <button
-          className="bg-red-500 px-4 py-2 rounded text-white"
+          className="bg-red-500 px-4 py-2 rounded text-white cursor-pointer"
           onClick={() => navigate("/Wishlist")}
         >
           Wishlist
@@ -138,102 +138,115 @@ const FetchApi = ({ setCart, setWish }) => {
         ) : data.length === 0 ? (
           <h1 className="text-4xl">No Data Found!!!</h1>
         ) : (
-          filterData.map((item) => (
-            <div
-              key={item.id}
-              className={`bg-white rounded-xl shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl 
-  ${viewDetail && viewDetail !== item.id ? "opacity-30 blur-sm scale-95" : ""}
-  ${viewDetail === item.id ? "ring-5 ring-green-500 scale-105 z-10" : ""}`}
-            >
-              <div className="h-48 flex items-center justify-center">
-                <LazyLoadImage
-                  src={item.thumbnail}
-                  alt={item.title}
-                  effect="blur"
-                  className="w-full h-52 object-contain"
-                />
-              </div>
+          filterData.map((item) => {
+            const isInCart = cart.some((c) => c.id === item.id);
 
+            return (
               <div
-                className={`p-4 text-sm ${viewDetail === item.id ? "space-y-2" : ""}`}
+                key={item.id}
+                className={`bg-white rounded-xl shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl 
+              ${viewDetail && viewDetail !== item.id ? "opacity-30 blur-sm scale-95" : ""}
+              ${viewDetail === item.id ? "ring-5 ring-green-500 scale-105 z-10" : ""}`}
               >
-                <p className="text-gray-500 font-bold text-sm">
-                  Id : {item.id}
-                </p>
-                <h2 className="font-semibold text-lg">{item.title}</h2>
-
-                <p className="text-gray-500">
-                  {showMore[item.id]
-                    ? item.description
-                    : item.description.split(" ").slice(0, 10).join(" ") +
-                      "..."}
-                </p>
-
-                <p
-                  onClick={() =>
-                    setShowMore((prev) => ({
-                      ...prev,
-                      [item.id]: !prev[item.id],
-                    }))
-                  }
-                  className="text-blue-500 cursor-pointer text-xs"
-                >
-                  {showMore[item.id] ? "less" : "more"}
-                </p>
-
-                <p><b>Category</b>: {item.category}</p>
-                <p><b>Brand</b>: {item.brand}</p>
-
-                <div className="flex justify-between">
-                  <p className="text-green-600 font-bold">₹{item.price}</p>
-                  <p>⭐ {item.rating}</p>
+                <div className="h-48 flex items-center justify-center">
+                  <LazyLoadImage
+                    src={item.thumbnail}
+                    alt={item.title}
+                    effect="blur"
+                    className="w-full h-52 object-contain"
+                  />
                 </div>
 
-                <button
-                  onClick={() =>
-                    setViewDetail(viewDetail === item.id ? null : item.id)
-                  }
-                  className="bg-green-500 px-4 py-2 rounded text-white"
+                <div
+                  className={`p-4 text-sm ${viewDetail === item.id ? "space-y-2" : ""}`}
                 >
-                  {viewDetail === item.id ? "Hide Detail" : "View Detail"}
-                </button>
+                  <p className="text-gray-500 font-bold text-sm">
+                    Id : {item.id}
+                  </p>
+                  <h2 className="font-semibold text-lg">{item.title}</h2>
 
-                {viewDetail === item.id && (
-                  <div className="mt-3 text-sm text-gray-700">
-                    <p>
-                      <b>Full Description:</b> {item.description}
-                    </p>
-                    <p>
-                      <b>Brand:</b> {item.brand}
-                    </p>
-                    <p>
-                      <b>Category:</b> {item.category}
-                    </p>
-                    <p>
-                      <b>Stock:</b> {item.stock}
-                    </p>
-                    <p>
-                      <b>Discount:</b> {item.discountPercentage}%
-                    </p>
+                  <p className="text-gray-500">
+                    {showMore[item.id]
+                      ? item.description
+                      : item.description.split(" ").slice(0, 10).join(" ") +
+                        "..."}
+                  </p>
+
+                  <p
+                    onClick={() =>
+                      setShowMore((prev) => ({
+                        ...prev,
+                        [item.id]: !prev[item.id],
+                      }))
+                    }
+                    className="text-blue-500 text-xs cursor-pointer"
+                  >
+                    {showMore[item.id] ? "less" : "more"}
+                  </p>
+
+                  <p>
+                    <b>Category</b>: {item.category}
+                  </p>
+                  <p>
+                    <b>Brand</b>: {item.brand}
+                  </p>
+
+                  <div className="flex justify-between">
+                    <p className="text-green-600 font-bold">₹{item.price}</p>
+                    <p>⭐ {item.rating}</p>
                   </div>
-                )}
 
-                <button
-                  className="bg-green-500 px-4 py-2  ml-20 rounded text-white"
-                  onClick={() => handleCart(item)}
-                >
-                  Add Cart
-                </button>
-                
-                <button
-                  className="bg-green-500 px-4 py-2 mt-5  ml-20 rounded text-white"
-                  onClick={() => handleWish(item)}
-                >
-                  Add WishList
-                </button>
+                  <button
+                    onClick={() =>
+                      // setViewDetail(viewDetail === item.id ? null : item.id)
+                      navigate(`/product/${item.id}`, { state: { item } })
+                    }
+                    className="bg-green-500 px-4 py-2 rounded text-white cursor-pointer"
+                  >
+                    {viewDetail === item.id ? "Hide Detail" : "View Detail"}
+                  </button>
+
+                  {viewDetail === item.id && (
+                    <div className="mt-3 text-sm text-gray-700">
+                      <p>
+                        <b>Full Description:</b> {item.description}
+                      </p>
+                      <p>
+                        <b>Brand:</b> {item.brand}
+                      </p>
+                      <p>
+                        <b>Category:</b> {item.category}
+                      </p>
+                      <p>
+                        <b>Stock:</b> {item.stock}
+                      </p>
+                      <p>
+                        <b>Discount:</b> {item.discountPercentage}%
+                      </p>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() =>
+                      isInCart ? removeFromCart(item) : handleCart(item)
+                    }
+                    className={`px-4 py-2 ml-20 rounded text-white cursor-pointer ${
+                      isInCart ? "bg-red-500" : "bg-green-500"
+                    }`}
+                  >
+                    {isInCart ? "Remove from Cart" : "Add to Cart"}
+                  </button>
+
+                  <button
+                    className="bg-green-500 px-4 py-2 mt-5  ml-20 rounded text-white cursor-pointer"
+                    onClick={() => handleWish(item)}
+                  >
+                    Add WishList
+                  </button>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { ClimbingBoxLoader } from "react-spinners";
 
 const ProductDetail = () => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
+  const location = useLocation() ;
+  console.log(">>>>>>location", location);
+  console.log(">>>>>>location.state>>>>", location.state);
+  
 
   const fetchData = async () => {
     const result = await axios.get(`https://dummyjson.com/products/${id}`);
