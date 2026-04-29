@@ -1,6 +1,4 @@
 @import "tailwindcss";
-
-
 body.light{
   background-color: black; 
   color: white;
@@ -9,9 +7,6 @@ body.dark{
   background-color: white; 
   color: black;
 }
-
-
-
 /* :root {
   --text: #6b6375;
   --text-h: #08060d;

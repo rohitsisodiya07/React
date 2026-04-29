@@ -15,8 +15,13 @@ import Wishlist from "./Wishlist";
 import Parent from "./Parent";
 import Help from "./Help";
 import Event from "./Event";
+import ApiGet from "./ApiGet";
+import UseTheme from "./UseTheme";
 
 function App() {
+
+
+  const {theme, toggleTheme} = UseTheme() ;
   const [cart, setCart] = useState([]);
   const [wish, setWish] = useState([]);
 
@@ -1826,9 +1831,10 @@ function App() {
   };
 
   return (
+    <>
     <Suspense fallback={<div>Loading......</div>}>
       <BrowserRouter>
-        <Header />
+        <Header theme={theme} toggleTheme={toggleTheme}/>
         <Routes>
           <Route path="/" element={<Counter />} />
           <Route path="/Signup" element={<Signup />} />
@@ -1853,9 +1859,12 @@ function App() {
           <Route path="/Parent" element={<Parent />} />
           <Route path="/Help" element={<Help />} />
           <Route path="/Event" element={<Event />} />
+          <Route path="/ApiGet" element={<ApiGet />} />
         </Routes>
       </BrowserRouter>
     </Suspense>
+
+    </>
   );
 }
 

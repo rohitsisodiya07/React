@@ -1,50 +1,14 @@
 import React, { useState } from 'react'
+import UseCounter from './UseCounter';
 
 const Counter = () => {
 
-  const initial = 10;
-  const [count, setCount] = useState(initial);
-
-  function increment() {
-    if (count + 2 > 50) {
-      alert("Addition is More Than 50!!");
-      setCount(initial);
-      return;
-    }
-    setCount(count + 2);
-  }
-
-  function decrement() {
-    if (count - 2 < 0) {
-      alert("Subtraction is Less Than 0!!");
-      setCount(initial);
-      return;
-    }
-    setCount(count - 2);
-  }
-
-  function multiply() {
-    if (count * 2 > 50) {
-      alert("Multiplication is Greater than 50!!");
-      setCount(initial);
-      return;
-    }
-    setCount(count * 2);
-  }
-
-  function divide() {
-    if (count / 2 < 0) {
-      alert("Division is Less than 0");
-      setCount(initial);
-      return;
-    }
-    setCount(count / 2);
-  }
+    const {count, increment, decrement, multiply, divide, reset} = UseCounter(10)
 
   return (
-    <div className="flex items-center justify-center h-screen bg-linear-to-br from-gray-700 to-gray-900">
+    <div className="flex items-center justify-center h-screen">
 
-      <div className="bg-white text-black p-8 rounded-2xl shadow-2xl w-80 text-center">
+      <div className="bg-white text-black p-8 rounded-2xl shadow-2xl w-80 text-center border-2 border-gray-500 hover:scale-110 duration-400">
 
         <h1 className="text-2xl font-bold mb-4">Counter</h1>
 
@@ -82,9 +46,18 @@ const Counter = () => {
             ÷
           </button>
 
+          
+          <button 
+            onClick={reset}
+            className="bg-blue-500 text-white text-2xl py-3 rounded-lg hover:bg-blue-600 transition"
+          >
+            Reset
+          </button>
+
         </div>
 
       </div>
+
     </div>
   )
 }
