@@ -5,6 +5,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
+    name : '',
     email: "",
     password: "",
   });
@@ -12,9 +13,9 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (form.email === "admin@123" && form.password === "1234") {
+    if (form.email && form.password && form.name) {
       alert("Login Successfully");
-      localStorage.setItem("NewUser", true);
+      localStorage.setItem("NewUser", form.name);
 
       navigate("/");
     } else {
@@ -23,6 +24,7 @@ const Login = () => {
     setForm({
       email: "",
       password: "",
+      name : ''
     });
   };
 
@@ -30,6 +32,13 @@ const Login = () => {
     <div>
       <div className="flex justify-center mt-10">
         <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
+          <input
+            type="name"
+            placeholder="Enter Your Name"
+            className="border-2 pl-2"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+          />
           <input
             type="email"
             placeholder="Enter Your Email"

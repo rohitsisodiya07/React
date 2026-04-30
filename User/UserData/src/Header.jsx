@@ -7,6 +7,7 @@ const Header = ({ theme, toggleTheme }) => {
       <div className="flex gap-6">
         <Link to="/">Home</Link>
         <Link to="/Login">Login</Link>
+        <Link to="/MyOrder">MyOrder</Link>
       </div>
 
       <button

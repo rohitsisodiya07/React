@@ -9,6 +9,7 @@ import Recepie from "./Recepie";
 import Post from "./Post";
 import Cart from "./Cart";
 import UseTheme from "./UseTheme";
+import MyOrder from "./MyOrder";
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
         <Route path="/recipes/:id" element={<Recepie />} />
         <Route path="/posts/:id" element={<Post />} />
         <Route path="/carts/:id" element={<Cart />} />
+        <Route path="/MyOrder" element={<MyOrder />} />
       </Routes>
     </BrowserRouter>
   );

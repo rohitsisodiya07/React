@@ -116,11 +116,11 @@ const Home = () => {
           </table>
         </div>
       ) : (
-        <div className="flex flex-wrap gap-7 justify-center items-stretch">
+        <div className="flex flex-wrap gap-7 justify-center">
           {filterData.map((item) => (
             <div
               key={item.id}
-              className="bg-white w-1/5 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col"
+              className="bg-white w-1/4 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col self-start"
             >
               <div className="flex justify-center items-center h-44 bg-gray-50">
                 <LazyLoadImage
@@ -159,7 +159,7 @@ const Home = () => {
                   onClick={() =>
                     setViewDetail(viewDetail === item.id ? null : item.id)
                   }
-                  className="w-full py-2 bg-green-400 rounded text-white"
+                  className="w-full py-2 bg-green-400 rounded text-white cursor-pointer"
                 >
                   {viewDetail === item.id ? "Hide Details" : "View Details"}
                 </button>
@@ -206,14 +206,14 @@ const Home = () => {
 
                     <button
                       onClick={() => navigate(`/recipes/${item.id}`)}
-                      className="w-full py-2 bg-blue-400 rounded text-white"
+                      className="w-full py-2 bg-blue-400 rounded text-white cursor-pointer"
                     >
                       View Recipes
                     </button>
 
                     <button
                       onClick={() => navigate(`/carts/${item.id}`)}
-                      className="w-full py-2 bg-red-400 rounded text-white"
+                      className="w-full py-2 bg-red-400 rounded text-white cursor-pointer"
                     >
                       View Cart
                     </button>

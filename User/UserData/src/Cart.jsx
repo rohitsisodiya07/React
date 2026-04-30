@@ -10,11 +10,11 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState("");
+  const [store, setStore] = useState([]);
   const { id } = useParams();
 
   const fetchData = async () => {
     const result = await axios.get(`https://dummyjson.com/carts/${id}`);
-    console.log(result.data);
     setData(result.data);
     setLoading(false);
   };
@@ -23,31 +23,58 @@ const Cart = () => {
     fetchData();
   }, [id]);
 
-  const filterData =
-    data.products?.filter((item) =>
+  const filterData = data.products
+    ?.filter((item) =>
       item.title.toLowerCase().includes(search.toLowerCase() || ""),
-    ).
-    sort( (a, b) => {
-        if( sorting === 'high') return b.price - a.price
-        if( sorting === 'low') return a.price - b.price
-        if( sorting === 'highDiscount') return b.discountedTotal - a.discountedTotal
-        if( sorting === 'lowDiscount') return a.discountedTotal - b.discountedTotal
-    })
+    )
+    .sort((a, b) => {
+      if (sorting === "high") return b.price - a.price;
+      if (sorting === "low") return a.price - b.price;
+      if (sorting === "highDiscount")
+        return b.discountedTotal - a.discountedTotal;
+      if (sorting === "lowDiscount")
+        return a.discountedTotal - b.discountedTotal;
+      return 0;
+    });
+
+  const handleOrder = (products) => {
+    const user = localStorage.getItem("NewUser");
+
+    let cartData = JSON.parse(localStorage.getItem("cartData")) || {};
+
+    let userCart = cartData[user] || [];
+
+    const alreadyExists = products.some((p) =>
+      userCart.some((i) => i.id === p.id),
+    );
+
+    if (alreadyExists) {
+      alert("Item already added in cart");
+      return;
+    }
+    alert("Order Placed")
+    cartData[user] = [...userCart, ...products];
+
+    localStorage.setItem("cartData", JSON.stringify(cartData));
+
+    setStore(cartData[user]);
+  };
+  console.log(">>>>>store", store); // data dekhne ke liye uske alava use nhi h
 
   return (
     <>
       <div className="text-center m-5">
         <button
           onClick={() => navigate("/")}
-          className="bg-sky-400 px-8 cursor-pointer py-2 rounded hover:bg-sky-500 text-sm"
+          className="bg-sky-400 px-8 py-2 rounded hover:bg-sky-500 text-sm"
         >
           Back
         </button>
       </div>
 
-      <div className="flex justify-around m-5   ">
+      <div className="flex justify-around m-5">
         <select
-          className="border p-2 cursor-pointer"
+          className="border p-2"
           onChange={(e) => setSorting(e.target.value)}
         >
           <option value="">Select Sorting</option>
@@ -59,12 +86,13 @@ const Cart = () => {
 
         <input
           type="search"
-          placeholder="Search user..."
+          placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="border px-4 py-2 rounded w-1/4"
         />
       </div>
+
       {loading ? (
         <div className="text-center mt-50 text-4xl">Loading.....</div>
       ) : (
@@ -116,6 +144,12 @@ const Cart = () => {
               <p className="text-xl font-bold text-green-600">
                 Final: ${data.discountedTotal}
               </p>
+              <button
+                onClick={() => handleOrder(data.products)}
+                className="bg-green-400 px-5 py-2 rounded cursor-pointer"
+              >
+                Place Order
+              </button>
             </div>
           </div>
         </div>
