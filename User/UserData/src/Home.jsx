@@ -3,7 +3,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+const Home = ({ user }) => {
   const navigate = useNavigate();
 
   const [data, setData] = useState([]);
@@ -27,6 +27,10 @@ const Home = () => {
   const handleTable = () => {
     setTable(!table);
   };
+  const handleLogOut = () => {
+    localStorage.removeItem("currentUser");
+    navigate("/Login");
+  };
 
   const filterData = data
     .filter(
@@ -44,30 +48,49 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <div className="flex justify-evenly m-5">
-        <select
-          className="border p-2 cursor-pointer"
-          onChange={(e) => setSorting(e.target.value)}
-        >
-          <option value="">Select Sorting</option>
-          <option value="high">High-Low Age</option>
-          <option value="low">Low-High Age</option>
-        </select>
+      <div className="sticky top-0 z-50 mx-5 mt-5 mb-6">
+        <div className="backdrop-blur-lg bg-white/80 border border-gray-200 shadow-lg rounded-2xl px-5 py-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <select
+              onChange={(e) => setSorting(e.target.value)}
+              className="px-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition cursor-pointer"
+            >
+              <option value="">Sort by</option>
+              <option value="high">High-Low Age</option>
+              <option value="low">Low-High Age</option>
+            </select>
 
-        <input
-          type="search"
-          placeholder="Search user..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border px-4 py-2 rounded w-1/4"
-        />
+            <div className="relative">
+              <input
+                type="search"
+                placeholder="Search user..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10 pr-4 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 w-60 transition"
+              />
+              <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
+            </div>
+          </div>
 
-        <button
-          onClick={handleTable}
-          className="bg-blue-300 px-5 py-2 rounded cursor-pointer"
-        >
-          {table ? "Card View" : "Table View"}
-        </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleTable}
+              className="flex items-center gap-2 backdrop-blur-md bg-indigo-500/80 text-white px-6 py-2.5 rounded-xl shadow-lg hover:bg-indigo-600 hover:scale-105 active:scale-95 transition-all duration-200"
+            >
+              {table ? "📊" : "📋"}
+              <span className="font-medium">
+                {table ? "Card View" : "Table View"}
+              </span>
+            </button>
+
+            <button
+              onClick={handleLogOut}
+              className="flex items-center gap-2 backdrop-blur-md bg-red-500/80 text-white px-6 py-2.5 rounded-xl shadow-lg hover:bg-red-600 hover:scale-105 active:scale-95 transition-all duration-200"
+            >
+              🚪 <span className="font-medium">Logout</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -126,8 +149,11 @@ const Home = () => {
                 <LazyLoadImage
                   alt="image"
                   effect="blur"
-                  src={item.image}
-                  className="h-32 w-32 object-contain rounded-full border"
+                  wrapperProps={{
+                    style: { transitionDelay: "1s" },
+                  }}
+                  src={user.find((u) => u.id === item.id)?.image}
+                  className="w-full rounded-full border"
                 />
               </div>
 

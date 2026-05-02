@@ -55,12 +55,12 @@ const Recepie = () => {
 
   return (
     <>
-      <div className="text-center">
+      <div className="flex justify-start m-5">
         <button
-          onClick={() => navigate("/")}
-          className="bg-sky-400 px-5 py-2 rounded hover:bg-sky-500 text-sm cursor-pointer"
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition cursor-pointer"
         >
-          Back
+          ⬅ <span className="font-medium">Back</span>
         </button>
       </div>
 

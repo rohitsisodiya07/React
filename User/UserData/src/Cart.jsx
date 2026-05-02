@@ -10,7 +10,8 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState("");
-  const [store, setStore] = useState([]);
+  const [ordered, setOrdered] = useState(false);
+  const [wishlist, setWishlist] = useState(false);
   const { id } = useParams();
 
   const fetchData = async () => {
@@ -21,11 +22,31 @@ const Cart = () => {
 
   useEffect(() => {
     fetchData();
+
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (!user) return;
+
+    const userName = user.name;
+
+    const cartData = JSON.parse(localStorage.getItem("cartData")) || {};
+    const userCart = cartData[userName] || [];
+
+    const isOrdered = userCart.some((item) => item.cartId == id);
+    setOrdered(isOrdered);
+
+    const wishlistData = JSON.parse(localStorage.getItem("wishlistData")) || {};
+    const userWishlist = wishlistData[userName] || [];
+
+    const isWishlisted = userWishlist.some(
+      (item) => item.wishlistId == id
+    );
+
+    setWishlist(isWishlisted);
   }, [id]);
 
   const filterData = data.products
     ?.filter((item) =>
-      item.title.toLowerCase().includes(search.toLowerCase() || ""),
+      item.title.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
       if (sorting === "high") return b.price - a.price;
@@ -38,37 +59,80 @@ const Cart = () => {
     });
 
   const handleOrder = (products) => {
-    const user = localStorage.getItem("NewUser");
+    const user = JSON.parse(localStorage.getItem("currentUser"));
 
-    let cartData = JSON.parse(localStorage.getItem("cartData")) || {};
-
-    let userCart = cartData[user] || [];
-
-    const alreadyExists = products.some((p) =>
-      userCart.some((i) => i.id === p.id),
-    );
-
-    if (alreadyExists) {
-      alert("Item already added in cart");
+    if (!user) {
+      alert("Please login first ❌");
+      navigate("/Login");
       return;
     }
-    alert("Order Placed")
-    cartData[user] = [...userCart, ...products];
+
+    const userKey = user.name;
+
+    let cartData = JSON.parse(localStorage.getItem("cartData")) || {};
+    let userCart = cartData[userKey] || [];
+
+    const newProducts = products.map((p) => ({
+      ...p,
+      ordered: true,
+      cartId: id,
+      uniqueId: Date.now() + Math.random(),
+    }));
+
+    cartData[userKey] = [...userCart, ...newProducts];
 
     localStorage.setItem("cartData", JSON.stringify(cartData));
 
-    setStore(cartData[user]);
+    setOrdered(true);
+
+    alert("Order Placed ✅");
   };
-  console.log(">>>>>store", store); // data dekhne ke liye uske alava use nhi h
+
+  const handleWishlist = (products) => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+
+    if (!user) {
+      alert("Please Login First ❌");
+      navigate("/Login");
+      return;
+    }
+
+    const userName = user.name;
+
+    let wishlistData = JSON.parse(localStorage.getItem("wishlistData")) || {};
+    let userWishlist = wishlistData[userName] || [];
+
+    const newProducts = products.map((item) => ({
+      ...item,
+      wishlist: true,
+      wishlistId: id,
+      uniqueId: Date.now() + Math.random(),
+    }));
+
+    const uniqueProducts = newProducts.filter(
+      (newItem) =>
+        !userWishlist.some(
+          (oldItem) => oldItem.wishlistId === newItem.wishlistId
+        )
+    );
+
+    wishlistData[userName] = [...userWishlist, ...uniqueProducts];
+
+    localStorage.setItem("wishlistData", JSON.stringify(wishlistData));
+
+    setWishlist(true);
+
+    alert("Wishlist Added ✅");
+  };
 
   return (
     <>
-      <div className="text-center m-5">
+      <div className="flex justify-start m-5">
         <button
-          onClick={() => navigate("/")}
-          className="bg-sky-400 px-8 py-2 rounded hover:bg-sky-500 text-sm"
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition cursor-pointer"
         >
-          Back
+          ⬅ <span className="font-medium">Back</span>
         </button>
       </div>
 
@@ -101,10 +165,10 @@ const Cart = () => {
             <h2 className="text-2xl font-bold mb-4">🛒 Cart #{data.id}</h2>
 
             <div className="space-y-4">
-              {filterData?.map((item) => (
+              {filterData?.map((item, index) => (
                 <div
-                  key={item.id}
-                  className="flex items-center gap-4 border rounded-xl p-3 hover:shadow-md transition"
+                  key={`${item.id}-${index}`}
+                  className="flex items-center gap-4 border rounded-xl p-3"
                 >
                   <LazyLoadImage
                     src={item.thumbnail}
@@ -114,22 +178,14 @@ const Cart = () => {
                   />
 
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      Qty: {item.quantity}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Price: ${item.price}
-                    </p>
+                    <h3 className="font-semibold">{item.title}</h3>
+                    <p>Qty: {item.quantity}</p>
+                    <p>Price: ${item.price}</p>
                   </div>
 
                   <div className="text-right">
-                    <p className="text-sm line-through text-gray-400">
-                      ${item.total}
-                    </p>
-                    <p className="text-lg font-semibold text-green-600">
+                    <p className="line-through">${item.total}</p>
+                    <p className="text-green-600 font-semibold">
                       ${item.discountedTotal}
                     </p>
                   </div>
@@ -137,19 +193,45 @@ const Cart = () => {
               ))}
             </div>
 
-            <div className="border-t mt-6 pt-4 space-y-2 text-right">
-              <p>Total Products: {data.totalProducts}</p>
-              <p>Total Quantity: {data.totalQuantity}</p>
-              <p className="text-gray-500 line-through">Total: ${data.total}</p>
-              <p className="text-xl font-bold text-green-600">
-                Final: ${data.discountedTotal}
-              </p>
-              <button
-                onClick={() => handleOrder(data.products)}
-                className="bg-green-400 px-5 py-2 rounded cursor-pointer"
-              >
-                Place Order
-              </button>
+            <div className="border-t mt-6 pt-4">
+              <div className="text-right space-y-1">
+                <p>Total Products: {data.totalProducts}</p>
+                <p>Total Quantity: {data.totalQuantity}</p>
+                <p className="line-through text-gray-500">
+                  Total: ${data.total}
+                </p>
+                <p className="text-xl font-bold text-green-600">
+                  Final: ${data.discountedTotal}
+                </p>
+              </div>
+
+              <div className="mt-5 flex justify-between items-center bg-amber-100 px-5 py-3 rounded-xl">
+                {wishlist ? (
+                  <div className="text-green-600 font-bold text-lg">
+                    ✅ Wishlisted
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleWishlist(data.products)}
+                    className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 active:scale-95 transition flex items-center gap-2 cursor-pointer"
+                  >
+                    💙 Wishlist
+                  </button>
+                )}
+
+                {ordered ? (
+                  <div className="text-green-600 font-bold text-lg">
+                    ✅ Ordered
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleOrder(data.products)}
+                    className="bg-green-500 text-white px-5 py-2 rounded-lg hover:bg-green-600 active:scale-95 transition flex items-center gap-2 cursor-pointer"
+                  >
+                    🛒 Place Order
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

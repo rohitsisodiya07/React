@@ -1,10 +1,17 @@
 import { Navigate } from "react-router-dom";
 
-function ProtectedRoute({children}) {
- 
-    const isLogin = localStorage.getItem('NewUser') ;
+function ProtectedRoute({ children }) {
+  const isLogin = localStorage.getItem("currentUser");
 
-    return isLogin ? children : (<Navigate to = '/Login' />)
+  if (isLogin) {
+    return children;
+  } else {
+
+      alert("Please!!! Login First");
+      return <Navigate to="/Login" />;
+  }
+
+  // return isLogin ? children : (<Navigate to = '/Login' />)
 }
 
-export default ProtectedRoute
+export default ProtectedRoute;

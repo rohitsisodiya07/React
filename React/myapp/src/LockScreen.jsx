@@ -3,7 +3,7 @@ import UseTheme from './UseTheme'
 
 const LockScreen = (theme, toggleTheme) => {
 
-     const {theme, toggleTheme} = UseTheme() ;
+    //  const {theme, toggleTheme} = UseTheme() ;
 
 
   return (
