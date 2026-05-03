@@ -163,7 +163,7 @@ const Wishlist = () => {
                     onClick={() => handleAddAllToCart(user)}
                     className="flex items-center gap-2 bg-green-500/90 backdrop-blur-md text-white px-5 py-2 rounded-xl shadow-md hover:bg-green-600 hover:scale-105 active:scale-95 transition-all duration-200"
                   >
-                    🛒 <span className="font-medium">Add All</span>
+                    🛒 <span className="font-medium">Add to Cart</span>
                   </button>
 
                   <button
