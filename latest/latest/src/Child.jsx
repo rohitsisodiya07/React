@@ -1,26 +1,18 @@
-import React, { useEffect } from 'react'
-import axios from 'axios'
+import React, { useEffect } from "react";
+import axios from "axios";
 
-const Child = ({sendData}) => {
+const Child = ({ sendData }) => {
+  const fetchData = async () => {
+    const result = await axios.get("https://dummyjson.com/recipes");
+    console.log(result.data.recipes);
+    sendData(result.data.recipes);
+  };
 
-    const fetchData = async() => {
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-            const result = await axios.get("https://dummyjson.com/recipes") ;
-            console.log(result.data.recipes);
-            sendData(result.data.recipes);
+  return <div></div>;
+};
 
-            
-    }
-
-    useEffect( () => {
-
-            fetchData() ;
-    }, [])
-
-
-  return (
-    <div></div>
-  )
-}
-
-export default Child
+export default Child;

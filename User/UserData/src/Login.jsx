@@ -1,13 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { loginUser } from "./slice/userSlice";
+
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+
+  const users = useSelector((state) => state.userData.user) || [];;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,9 +23,6 @@ const Login = () => {
       alert("Please fill all fields");
       return;
     }
-
-    // get users from localStorage
-    const users = JSON.parse(localStorage.getItem("UserSignup")) || [];
 
     // find user
     const validUser = users.find(
@@ -30,7 +34,8 @@ const Login = () => {
       alert("Login Successful 🎉");
 
       // store logged-in user
-      localStorage.setItem("currentUser", JSON.stringify(validUser));
+      // localStorage.setItem("currentUser", JSON.stringify(validUser));
+      dispatch(loginUser(validUser))
 
       navigate("/");
     } else {

@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "./slice/userSlice";
+import { useSelector } from "react-redux";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const existingUsers = useSelector((state) => state.userData.user) || [];
 
   const [form, setForm] = useState({
     name: "",
@@ -11,6 +17,8 @@ const Signup = () => {
     confirmPassword: "",
   });
 
+  // console.log(">>>>>>>>>exist", existingUsers);
+  
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -23,8 +31,6 @@ const Signup = () => {
       alert("Passwords do not match");
       return;
     }
-
-    const existingUsers = JSON.parse(localStorage.getItem("UserSignup")) || [];
 
     const userExists = existingUsers.find(
       (user) => user.email.toLowerCase() === form.email.toLowerCase(),
@@ -39,7 +45,9 @@ const Signup = () => {
 
     const updatedUsers = [...existingUsers, userData];
 
-    localStorage.setItem("UserSignup", JSON.stringify(updatedUsers));
+    console.log(">>>>>>>>>>Updated Users:", updatedUsers);
+
+    dispatch(addUser(userData));
 
     alert("Signup Successful 🎉");
 

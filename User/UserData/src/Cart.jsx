@@ -1,130 +1,176 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { addCart } from "./slice/cartSlice";
+import { addWishlist } from "./slice/wishSlice";
 
 const Cart = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { id } = useParams();
+
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState("");
   const [ordered, setOrdered] = useState(false);
   const [wishlist, setWishlist] = useState(false);
-  const { id } = useParams();
+
+  const productId = Number(id);
+
+  const user = useSelector((state) => state.userData.currentUser);
+
+  const cartItems = useSelector((state) => state.userCart.cart);
+
+  const wishlistItems = useSelector((state) => state.userWishlist.wishlist);
 
   const fetchData = async () => {
-    const result = await axios.get(`https://dummyjson.com/carts/${id}`);
-    setData(result.data);
-    setLoading(false);
+    try {
+      setLoading(true);
+
+      const res = await axios.get(`https://dummyjson.com/carts/${id}`);
+
+      setData(res.data);
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
+    if (!id) return;
+
     fetchData();
-
-    const user = JSON.parse(localStorage.getItem("currentUser"));
-    if (!user) return;
-
-    const userName = user.name;
-
-    const cartData = JSON.parse(localStorage.getItem("cartData")) || {};
-    const userCart = cartData[userName] || [];
-
-    const isOrdered = userCart.some((item) => item.cartId == id);
-    setOrdered(isOrdered);
-
-    const wishlistData = JSON.parse(localStorage.getItem("wishlistData")) || {};
-    const userWishlist = wishlistData[userName] || [];
-
-    const isWishlisted = userWishlist.some(
-      (item) => item.wishlistId == id
-    );
-
-    setWishlist(isWishlisted);
   }, [id]);
 
-  const filterData = data.products
-    ?.filter((item) =>
-      item.title.toLowerCase().includes(search.toLowerCase())
-    )
-    .sort((a, b) => {
-      if (sorting === "high") return b.price - a.price;
-      if (sorting === "low") return a.price - b.price;
-      if (sorting === "highDiscount")
-        return b.discountedTotal - a.discountedTotal;
-      if (sorting === "lowDiscount")
-        return a.discountedTotal - b.discountedTotal;
-      return 0;
-    });
+  useEffect(() => {
+    if (!user) return;
 
-  const handleOrder = (products) => {
-    const user = JSON.parse(localStorage.getItem("currentUser"));
+    const isOrdered = cartItems.some(
+      (item) => item.cartId === productId && item.userName === user.name,
+    );
 
+    const isWishlisted = wishlistItems.some(
+      (item) => item.wishlistId === productId && item.userName === user.name,
+    );
+
+    setOrdered(isOrdered);
+
+    setWishlist(isWishlisted);
+  }, [cartItems, wishlistItems, productId, user]);
+
+  const filterData = useMemo(() => {
+    return data.products
+      ?.filter((item) =>
+        item.title.toLowerCase().includes(search.toLowerCase()),
+      )
+      .sort((a, b) => {
+        if (sorting === "high") {
+          return b.price - a.price;
+        }
+
+        if (sorting === "low") {
+          return a.price - b.price;
+        }
+
+        if (sorting === "highDiscount") {
+          return b.discountedTotal - a.discountedTotal;
+        }
+
+        if (sorting === "lowDiscount") {
+          return a.discountedTotal - b.discountedTotal;
+        }
+
+        return 0;
+      });
+  }, [data, search, sorting]);
+
+  const handleOrder = (products = []) => {
     if (!user) {
       alert("Please login first ❌");
+
       navigate("/Login");
+
       return;
     }
 
-    const userKey = user.name;
+    if (!products.length) {
+      alert("No Products Found ❌");
 
-    let cartData = JSON.parse(localStorage.getItem("cartData")) || {};
-    let userCart = cartData[userKey] || [];
+      return;
+    }
 
-    const newProducts = products.map((p) => ({
-      ...p,
+    const alreadyOrdered = cartItems.some(
+      (item) => item.cartId === productId && item.userName === user.name,
+    );
+
+    if (alreadyOrdered) {
+      alert("Already Ordered ✅");
+
+      return;
+    }
+
+    const newProducts = products.map((item) => ({
+      ...item,
       ordered: true,
-      cartId: id,
+      cartId: productId,
       uniqueId: Date.now() + Math.random(),
+      userName: user.name,
     }));
 
-    cartData[userKey] = [...userCart, ...newProducts];
-
-    localStorage.setItem("cartData", JSON.stringify(cartData));
+    dispatch(addCart(newProducts));
 
     setOrdered(true);
 
     alert("Order Placed ✅");
   };
 
-  const handleWishlist = (products) => {
-    const user = JSON.parse(localStorage.getItem("currentUser"));
-
+  const handleWishlist = (products = []) => {
     if (!user) {
-      alert("Please Login First ❌");
+      alert("Please login first ❌");
+
       navigate("/Login");
+
       return;
     }
 
-    const userName = user.name;
+    if (!products.length) {
+      alert("No Products Found ❌");
 
-    let wishlistData = JSON.parse(localStorage.getItem("wishlistData")) || {};
-    let userWishlist = wishlistData[userName] || [];
+      return;
+    }
+
+    const alreadyWishlisted = wishlistItems.some(
+      (item) => item.wishlistId === productId && item.userName === user.name,
+    );
+
+    if (alreadyWishlisted) {
+      alert("Already Wishlisted ❤️");
+
+      return;
+    }
 
     const newProducts = products.map((item) => ({
       ...item,
       wishlist: true,
-      wishlistId: id,
+      wishlistId: productId,
       uniqueId: Date.now() + Math.random(),
+      userName: user.name,
     }));
 
-    const uniqueProducts = newProducts.filter(
-      (newItem) =>
-        !userWishlist.some(
-          (oldItem) => oldItem.wishlistId === newItem.wishlistId
-        )
-    );
-
-    wishlistData[userName] = [...userWishlist, ...uniqueProducts];
-
-    localStorage.setItem("wishlistData", JSON.stringify(wishlistData));
+    dispatch(addWishlist(newProducts));
 
     setWishlist(true);
 
     alert("Wishlist Added ✅");
   };
-
+  console.log(">>>>>>>data", data);
+  console.log("products", data.products);
   return (
     <>
       <div className="flex justify-start m-5">
@@ -183,7 +229,7 @@ const Cart = () => {
                     <p>Price: ${item.price}</p>
                   </div>
 
-                  <div className="text-right">
+                  <div className="text-right px-2 py-1 rounded">
                     <p className="line-through">${item.total}</p>
                     <p className="text-green-600 font-semibold">
                       ${item.discountedTotal}
@@ -207,12 +253,12 @@ const Cart = () => {
 
               <div className="mt-5 flex justify-between items-center bg-amber-100 px-5 py-3 rounded-xl">
                 {wishlist ? (
-                  <div className="text-green-600 font-bold text-lg">
+                  <div className="text-sky-600 font-bold text-lg">
                     ✅ Wishlisted
                   </div>
                 ) : (
                   <button
-                    onClick={() => handleWishlist(data.products)}
+                    onClick={() => handleWishlist(data?.products || [])}
                     className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 active:scale-95 transition flex items-center gap-2 cursor-pointer"
                   >
                     💙 Wishlist
@@ -225,7 +271,7 @@ const Cart = () => {
                   </div>
                 ) : (
                   <button
-                    onClick={() => handleOrder(data.products)}
+                    onClick={() => handleOrder(data?.products || [])}
                     className="bg-green-500 text-white px-5 py-2 rounded-lg hover:bg-green-600 active:scale-95 transition flex items-center gap-2 cursor-pointer"
                   >
                     🛒 Place Order

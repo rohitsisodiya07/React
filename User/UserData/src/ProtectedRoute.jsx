@@ -1,7 +1,8 @@
 import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function ProtectedRoute({ children }) {
-  const isLogin = localStorage.getItem("currentUser");
+  const isLogin = useSelector( (state) => state.userData.currentUser);
 
   if (isLogin) {
     return children;

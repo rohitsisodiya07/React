@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Home = ({ user }) => {
   const navigate = useNavigate();
@@ -31,6 +32,9 @@ const Home = ({ user }) => {
     localStorage.removeItem("currentUser");
     navigate("/Login");
   };
+
+  // console.log(">>>>>>data", data);
+  
 
   const filterData = data
     .filter(

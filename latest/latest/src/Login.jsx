@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Login = () => {
+
+  const userData = useSelector( (state)=> state.signup)
+  console.log(">>>>>>>>>userData", userData.user);
+  
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -11,18 +16,30 @@ const Login = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+
+    setForm({
+      ...form,
+      [name]: value,
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // console.log(result);
-    if ( 'admin@123' === form.email && '1234' === form.password) {
+
+    const user = JSON.parse(localStorage.getItem("latestUser"));
+
+    if (
+      user &&
+      user.email === form.email &&
+      user.password === form.password
+    ) {
       alert("Login Successful");
-      localStorage.setItem('token', true) ;
+
+      localStorage.setItem("token", "true");
+
       navigate("/");
     } else {
-      alert("Invalid Details");
+      alert("Invalid Email or Password");
     }
 
     setForm({
@@ -30,6 +47,7 @@ const Login = () => {
       password: "",
     });
   };
+
   return (
     <div>
       <div className="text-center mt-20">
@@ -56,7 +74,7 @@ const Login = () => {
           />
 
           <button className="bg-cyan-500 text-white px-4 py-2 rounded hover:bg-cyan-600 cursor-pointer">
-            Submit
+            Login
           </button>
         </form>
       </div>

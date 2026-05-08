@@ -1,103 +1,95 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { removeWishlist, removeUserWishlist } from "./slice/wishSlice";
+import { addCart } from "./slice/cartSlice";
 
 const Wishlist = () => {
   const navigate = useNavigate();
-  const [wishlistData, setWishlistData] = useState({});
+  const dispatch = useDispatch();
+
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState("");
   const [selectedUser, setSelectedUser] = useState("");
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("wishlistData")) || {};
-    setWishlistData(data);
-    setLoading(false);
-  }, []);
-  // console.log(">>>>>>>>>wish", wishlistData);
+  const wishlistItems = useSelector((state) => state.userWishlist.wishlist);
 
-  const users = Object.keys(wishlistData);
+  const cartItems = useSelector((state) => state.userCart.cart);
 
-  const filterData = Object.fromEntries(
-    Object.entries(wishlistData)
-      .filter(([user]) => (selectedUser ? user === selectedUser : true))
-      .map(([user, items]) => [
-        user,
-        items
-          .filter((item) =>
-            item.title.toLowerCase().includes(search.toLowerCase()),
-          )
-          .sort((a, b) => {
-            if (sorting === "highPrice") return b.price - a.price;
-            if (sorting === "lowPrice") return a.price - b.price;
-            if (sorting === "highDiscount")
-              return b.discountedTotal - a.discountedTotal;
-            if (sorting === "lowDiscount")
-              return a.discountedTotal - b.discountedTotal;
-          }),
-      ]),
-  );
+  const currentUser = useSelector((state) => state.userData.currentUser);
 
-  // console.log(">>>>>filterdata", filterData);
+  const users = [...new Set(wishlistItems.map((item) => item.userName))];
 
-  const handleRemove = (user, id) => {
-    let updatedWishlist = { ...wishlistData };
-    const updatedItems = updatedWishlist[user].filter((item) => item.id !== id);
-    if (updatedItems.length === 0) {
-      delete updatedWishlist[user];
-    } else {
-      updatedWishlist[user] = updatedItems;
-    }
-    localStorage.setItem("wishlistData", JSON.stringify(updatedWishlist));
-    setWishlistData(updatedWishlist);
+  const filteredData = useMemo(() => {
+    return wishlistItems
+      .filter((item) => (selectedUser ? item.userName === selectedUser : true))
+      .filter((item) => item.title.toLowerCase().includes(search.toLowerCase()))
+      .sort((a, b) => {
+        if (sorting === "highPrice") {
+          return b.price - a.price;
+        }
+
+        if (sorting === "lowPrice") {
+          return a.price - b.price;
+        }
+
+        if (sorting === "highDiscount") {
+          return b.discountedTotal - a.discountedTotal;
+        }
+
+        if (sorting === "lowDiscount") {
+          return a.discountedTotal - b.discountedTotal;
+        }
+
+        return 0;
+      });
+  }, [wishlistItems, selectedUser, search, sorting]);
+
+  const handleRemove = (id) => {
+    dispatch(removeWishlist(id));
   };
 
   const handleRemoveUser = (user) => {
     if (!window.confirm("Remove all items of this user?")) return;
-    let updatedWishlist = { ...wishlistData };
-    delete updatedWishlist[user];
-    localStorage.setItem("wishlistData", JSON.stringify(updatedWishlist));
-    setWishlistData(updatedWishlist);
+
+    dispatch(removeUserWishlist(user));
+
     setSelectedUser("");
   };
 
-  const handleAddAllToCart = (user) => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
+  const handleAddToCart = (item) => {
     if (!currentUser) {
       alert("Please login first ❌");
+
       navigate("/Login");
+
       return;
     }
 
-    const userName = currentUser.name;
-
-    let cartData = JSON.parse(localStorage.getItem("cartData")) || {};
-    let userCart = cartData[userName] || [];
-
-    const wishlistItems = wishlistData[user] || [];
-
-    const newItems = wishlistItems.filter(
-      (item) => !userCart.some((cartItem) => cartItem.id === item.id),
+    const alreadyInCart = cartItems.some(
+      (cartItem) =>
+        cartItem.id === item.id && cartItem.userName === currentUser.name,
     );
 
-    if (newItems.length === 0) {
-      alert("All items already in cart ⚠️");
+    if (alreadyInCart) {
+      alert("Already In Cart 🛒");
+
       return;
     }
 
-    const updatedItems = newItems.map((item) => ({
+    const newItem = {
       ...item,
+      ordered: true,
       cartId: Date.now() + Math.random(),
-    }));
+      uniqueId: Date.now() + Math.random(),
+      userName: currentUser.name,
+    };
 
-    cartData[userName] = [...userCart, ...updatedItems];
+    dispatch(addCart([newItem]));
 
-    localStorage.setItem("cartData", JSON.stringify(cartData));
-
-    alert("All items added to cart ✅");
+    alert("Added To Cart ✅");
   };
 
   return (
@@ -110,6 +102,7 @@ const Wishlist = () => {
           ⬅ <span className="font-medium">Back</span>
         </button>
       </div>
+
       <div className="min-h-screen bg-gray-100 p-6">
         <h2 className="text-2xl font-bold text-center mb-6">
           💙 All Wishlists
@@ -121,18 +114,24 @@ const Wishlist = () => {
             onChange={(e) => setSorting(e.target.value)}
           >
             <option value="">Select Sorting</option>
+
             <option value="highPrice">High-Low Price</option>
+
             <option value="lowPrice">Low-High Price</option>
+
             <option value="highDiscount">High-Low Discount</option>
+
             <option value="lowDiscount">Low-High Discount</option>
           </select>
 
           <select
+            value={selectedUser}
             onChange={(e) => setSelectedUser(e.target.value)}
             className="border px-3 py-2 rounded"
           >
             <option value="">All Users</option>
-            {Object.keys(wishlistData).map((user) => (
+
+            {users.map((user) => (
               <option key={user} value={user}>
                 {user}
               </option>
@@ -148,76 +147,77 @@ const Wishlist = () => {
           />
         </div>
 
-        {loading ? (
-          <div className="text-center text-xl">Loading...</div>
-        ) : Object.keys(filterData).length === 0 ? (
+        {filteredData.length === 0 ? (
           <p className="text-center text-gray-500">No wishlist data ❌</p>
         ) : (
-          Object.entries(filterData).map(([user, items]) => (
-            <div key={user} className="mb-10">
-              <div className="flex justify-between items-center mb-5">
-                <h3 className="text-xl font-bold text-blue-600">👤 {user}</h3>
+          users
+            .filter((user) => (selectedUser ? user === selectedUser : true))
+            .map((user) => {
+              const items = filteredData.filter(
+                (item) => item.userName === user,
+              );
 
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => handleAddAllToCart(user)}
-                    className="flex items-center gap-2 bg-green-500/90 backdrop-blur-md text-white px-5 py-2 rounded-xl shadow-md hover:bg-green-600 hover:scale-105 active:scale-95 transition-all duration-200"
-                  >
-                    🛒 <span className="font-medium">Add to Cart</span>
-                  </button>
+              if (items.length === 0) return null;
 
-                  <button
-                    onClick={() => handleRemoveUser(user)}
-                    className="flex items-center gap-2 bg-red-500/90 backdrop-blur-md text-white px-5 py-2 rounded-xl shadow-md hover:bg-red-600 hover:scale-105 active:scale-95 transition-all duration-200"
-                  >
-                    🗑 <span className="font-medium">Clear</span>
-                  </button>
-                </div>
-              </div>
+              return (
+                <div key={user} className="mb-10">
+                  <div className="flex justify-between items-center mb-5">
+                    <h3 className="text-xl font-bold text-blue-600">
+                      👤 {user}
+                    </h3>
 
-              {items.length === 0 ? (
-                <p className="text-gray-500">No items</p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {items.map((item, index) => (
-                    <div
-                      key={`${item.id}-${index}`}
-                      className="bg-white rounded-xl shadow p-4 flex flex-col items-center"
+                    <button
+                      onClick={() => handleRemoveUser(user)}
+                      className="flex items-center gap-2 bg-red-500 text-white px-5 py-2 rounded-xl hover:bg-red-600 transition"
                     >
-                      <LazyLoadImage
-                        src={item.thumbnail}
-                        effect="blur"
-                        wrapperProps={{
-                          style: { transitionDelay: "0.1s" },
-                        }}
-                        alt=""
-                        className="w-32 h-32 object-contain mb-3"
-                      />
+                      🗑 Clear
+                    </button>
+                  </div>
 
-                      <h3 className="font-semibold text-center">
-                        {item.title}
-                      </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {items.map((item) => (
+                      <div
+                        key={item.uniqueId}
+                        className="bg-white rounded-xl shadow p-4 flex flex-col items-center"
+                      >
+                        <LazyLoadImage
+                          src={item.thumbnail}
+                          effect="blur"
+                          alt=""
+                          className="w-32 h-32 object-contain mb-3"
+                        />
 
-                      <p className="text-gray-600">Price: ${item.price}</p>
+                        <h3 className="font-semibold text-center">
+                          {item.title}
+                        </h3>
 
-                      <p className="text-green-600 font-bold">
-                        ${item.discountedTotal}
-                      </p>
+                        <p className="text-gray-600">Price: ${item.price}</p>
 
-                      <div className="text-center mt-3">
-                        <button
-                          onClick={() => handleRemove(user, item.id)}
-                          className="bg-red-500 hover:bg-red-700 text-white py-1.5 px-5 rounded cursor-pointer"
-                        >
-                          Remove
-                        </button>
+                        <p className="text-green-600 font-bold">
+                          ${item.discountedTotal}
+                        </p>
+
+                        <div className="text-center mt-3 flex flex-col gap-2">
+                          <button
+                            onClick={() => handleAddToCart(item)}
+                            className="bg-green-500 hover:bg-green-700 text-white py-1.5 px-5 rounded cursor-pointer"
+                          >
+                            🛒 Add To Cart
+                          </button>
+
+                          <button
+                            onClick={() => handleRemove(item.uniqueId)}
+                            className="bg-red-500 hover:bg-red-700 text-white py-1.5 px-5 rounded cursor-pointer"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              )}
-            </div>
-          ))
+              );
+            })
         )}
       </div>
     </>
